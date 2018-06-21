@@ -3,31 +3,31 @@
 # 01.02.2018
 
 ################################### REQUIRED ATTRIBUTES #####################################
-forecastbase.dataset.filepath: "../datasets/energy-demand-forecasting/zone_1_energy_demand.csv"
+prescient.dataset.filepath: "../datasets/energy-demand-forecasting/zone_1_energy_demand.csv"
 
-forecastbase.training.data.percent.min: 70
-forecastbase.training.data.percent.max: 80
-forecastbase.training.data.percent.increment.by: 5
+prescient.training.data.percent.min: 70
+prescient.training.data.percent.max: 80
+prescient.training.data.percent.increment.by: 5
 
-forecastbase.interval.width.min: 0.05
-forecastbase.interval.width.max: 0.85
-forecastbase.interval.width.increment.by: 0.05
+prescient.interval.width.min: 0.05
+prescient.interval.width.max: 0.85
+prescient.interval.width.increment.by: 0.05
 
-forecastbase.changepoint.prior.scale.min: 0.001
-forecastbase.changepoint.prior.scale.max: 0.5
-forecastbase.changepoint.prior.scale.increment.by: 0.001
+prescient.changepoint.prior.scale.min: 0.001
+prescient.changepoint.prior.scale.max: 0.5
+prescient.changepoint.prior.scale.increment.by: 0.001
 
-forecastbase.predict.next: 7
-forecastbase.predict.freq: "D"
+prescient.predict.next: 7
+prescient.predict.freq: "D"
 
-forecastbase.convergence.detection.acr.threshold: -0.5 # must be negative
-forecastbase.convergence.detection.measure.number: 3
+prescient.convergence.detection.acr.threshold: -0.5 # must be negative
+prescient.convergence.detection.measure.number: 3
 
-forecastbase.paralellism: 3
-forecastbase.holiday.weekends.enabled: true
+prescient.paralellism: 3
+prescient.holiday.weekends.enabled: true
 
 ################################### OPTIONAL ATTRIBUTES #######################################
-forecastbase.holiday.special.days:
+prescient.holiday.special.days:
   # - "2017-01-30"
   # - "2017-02-28"
 ###############################################################################################

@@ -1,11 +1,4 @@
 '''
-   _____   ______   _______   _______   _______   _______   _______   _______   ________   _______   _______   _______
-  |   __| |  __  | |       | |   __  | |  _____| |  ___  | | ______| |___ ___| |   __   \ |  ___  | | ______| |   __  |
-  |  |__  | |  | | |     __| |  |__| | |  |      | |___| | | |_____     | |    |  |__|  | | |___| | | |_____  |  |__| |
-  |   __| | |  | | |  |\ \   |  _____| |  |      |  ___  | |______ |    | |    |   __  /  |  ___  | |______ | |  _____|
-  |  |    | |__| | |  | \ \  |  |____  |  |____  | |   | |  _____| |    | |    |  |__| \  | |   | |  _____| | |  |____
-  |__|    |______| |__|  \_\ |_______| |_______| |_|   |_| |_______|    |_|    |_______|  |_|   |_| |_______| |_______|
-
 Automated forecasting tool for businesses.
 
 Developed by Mutlu Polatcan
@@ -28,8 +21,8 @@ import signal
 from colorama import Fore
 from concurrent.futures import ProcessPoolExecutor
 from ProphetExecutor import ProphetExecutor
-from ForecastbaseConfig import ForecastbaseConfig
-from ForecastbaseLogger import ForecastbaseLogger
+from PrescientConfig import PrescientConfig
+from PrescientLogger import PrescientLogger
 from collections import deque
 import sys
 
@@ -41,7 +34,7 @@ best_accuracies = deque()
 # -----------------------------------------------------------------
 
 # ---------------------------------- CONFIGS ---------------------------------------
-config = ForecastbaseConfig(sys.argv[1])  # get configuration from file
+config = PrescientConfig(sys.argv[1])  # get configuration from file
 dataset_filepath = config.get_str("forecastbase.dataset.filepath")
 tdp_min = config.get_float("forecastbase.training.data.percent.min")
 tdp_max = config.get_float("forecastbase.training.data.percent.max")
@@ -108,7 +101,7 @@ def prepare_training_file(training_data_percent):
     # Calculate training data count according to percentage
     training_data_count = (data_count * training_data_percent) / 100
 
-    ForecastbaseLogger.console_log("FORECASTBASE", Fore.YELLOW, "Preparing training file for parameter training_data_percent=%" + str(training_data_percent) +
+    PrescientLogger.console_log("FORECASTBASE", Fore.YELLOW, "Preparing training file for parameter training_data_percent=%" + str(training_data_percent) +
        " Original data count:" + str(data_count) + " Training data count: " + str(training_data_count))
 
     # Create training data file
@@ -119,7 +112,7 @@ def prepare_training_file(training_data_percent):
 def load_holiday_weekends(training_data_percent):
     global holiday_weekends
 
-    ForecastbaseLogger.console_log("FORECASTBASE", Fore.YELLOW, "Preparing weekends for parameter training_data_percent=%" + str(training_data_percent))
+    PrescientLogger.console_log("FORECASTBASE", Fore.YELLOW, "Preparing weekends for parameter training_data_percent=%" + str(training_data_percent))
 
     df_training_data = pd.read_csv(os.path.basename(dataset_filepath).split('.')[0] + "_training_%" + str(training_data_percent) + ".csv")
     df_training_data['ds'] = pd.to_datetime(df_training_data['ds'])  # Convert string to datetime
@@ -135,7 +128,7 @@ def load_holiday_weekends(training_data_percent):
 
 
 def show_intermediate_results(average_acr, acr_frame):
-    ForecastbaseLogger.console_log(
+    PrescientLogger.console_log(
        None,
        Fore.BLUE,
        "########################################################################",
@@ -160,10 +153,14 @@ def model_training_done_callback(model_fn):
             model = model_fn.result()
 
             if accuracy_change_rates.__len__() < measure_number:
-                accuracy_change_rates.append(model[0] - best_model[0]); accuracies.append(model[0]); best_accuracies.append(best_model[0])
+                accuracy_change_rates.append(model[0] - best_model[0])
+                accuracies.append(model[0])
+                best_accuracies.append(best_model[0])
             else:
                 # Remove oldest data and add last data
-                accuracy_change_rates.popleft(); accuracies.popleft(); best_accuracies.popleft()
+                accuracy_change_rates.popleft()
+                accuracies.popleft()
+                best_accuracies.popleft()
 
                 accuracy_change_rates.append(model[0] - best_model[0]); accuracies.append(model[0]); best_accuracies.append(best_model[0])
 
@@ -180,7 +177,7 @@ def model_training_done_callback(model_fn):
 
                 # If average accuracy change rate below threshold stop Forecastbase
                 if average_acr < average_acr_threshold:
-                    ForecastbaseLogger.console_log("FORECASTBASE", Fore.RED, "Convergence Detected!! Best model is accuracy=" + str(best_model[0]) +
+                    PrescientLogger.console_log("FORECASTBASE", Fore.RED, "Convergence Detected!! Best model is accuracy=" + str(best_model[0]) +
                           " training_data_percent=" + str(best_model[1]) + " interval_width=" + str(best_model[2]) + " changepoint_prior_scale=" + str(best_model[3]))
 
                     semaphore.release()  # Release acquired semaphore

@@ -4,7 +4,7 @@
 import yaml
 
 
-class ForecastbaseConfig:
+class PrescientConfig:
     def __init__(self, config_filename):
         # Load config from file
         with open(config_filename, "r") as stream:

@@ -8,21 +8,29 @@ import pandas as pd
 import numpy as np
 from colorama import Fore
 from ProphetOutputSuppressor import ProphetOutputSuppressor
-from ForecastbaseLogger import ForecastbaseLogger
+from PrescientLogger import PrescientLogger
 
 
 class ProphetExecutor:
     def __init__(self):
         pass
 
-    def execute(self, model_index, file_path, training_data_percent, interval_width, changepoint_prior_scale, predict_next, predict_freq,
-                holiday_weekends, holiday_special_days):
+    def execute(self,
+                model_index,
+                file_path,
+                training_data_percent,
+                interval_width,
+                changepoint_prior_scale,
+                predict_next,
+                predict_freq,
+                holiday_weekends,
+                holiday_special_days):
         log_owner = "MODEL - " + str(model_index)
 
         start_time = time.time()
 
         # ---------------------------------------------- TRAINING PHASE ------------------------------------------------
-        ForecastbaseLogger.console_log(log_owner, Fore.CYAN, "Training model with parameters training_data_percent=" + str(training_data_percent) +
+        PrescientLogger.console_log(log_owner, Fore.CYAN, "Training model with parameters training_data_percent=" + str(training_data_percent) +
            " interval_width=" + str(interval_width) + " changepoint_prior_scale=" + str(changepoint_prior_scale))
 
         # Read training and original data
@@ -65,7 +73,7 @@ class ProphetExecutor:
         # --------------------------------------------------------------------------------------------------------------
 
         # --------------------------------------------- PREDICTION PHASE -----------------------------------------------
-        ForecastbaseLogger.console_log(log_owner, Fore.GREEN, "Predicting next " + str(predict_next) + " " + self.__get_predict_freq_str(predict_freq))
+        PrescientLogger.console_log(log_owner, Fore.GREEN, "Predicting next " + str(predict_next) + " " + self.__get_predict_freq_str(predict_freq))
 
         df_future = model.make_future_dataframe(periods=predict_next, freq=predict_freq)
         df_forecast_result = model.predict(df_future)
@@ -86,12 +94,12 @@ class ProphetExecutor:
         testing_error = (df_testing_accuracy['percentage'].sum() / len(df_testing_accuracy.index)) * 100
         testing_accuracy = 100 - testing_error
 
-        ForecastbaseLogger.console_log(log_owner, Fore.YELLOW, "Result: Accuracy: " + str(testing_accuracy) + " interval_width: " + str(interval_width) +
+        PrescientLogger.console_log(log_owner, Fore.YELLOW, "Result: Accuracy: " + str(testing_accuracy) + " interval_width: " + str(interval_width) +
                 " changepoint_prior_scale: " + str(changepoint_prior_scale))
 
         end_time = time.time()
 
-        ForecastbaseLogger.console_log(log_owner, Fore.RED, "Elapsed time: " + time.strftime("%H:%M:%S", time.gmtime(end_time - start_time)))
+        PrescientLogger.console_log(log_owner, Fore.RED, "Elapsed time: " + time.strftime("%H:%M:%S", time.gmtime(end_time - start_time)))
         # --------------------------------------------------------------------------------------------------------------
 
         return testing_accuracy, training_data_percent, interval_width, changepoint_prior_scale

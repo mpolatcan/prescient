@@ -6,7 +6,7 @@ from colorama import Style, init, deinit
 semaphore = threading.BoundedSemaphore(value=1)
 
 
-class ForecastbaseLogger:
+class PrescientLogger:
     def __init__(self):
         pass
 
